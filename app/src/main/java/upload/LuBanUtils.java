@@ -2,6 +2,7 @@ package upload;
 
 import android.content.Context;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.File;
@@ -17,7 +18,7 @@ public class LuBanUtils {
      * notice 图片压缩(集合)
      * @param photoPaths 压缩文件的路径集合
      */
-    private void compressPic(final ArrayList<String> photoPaths, final Context context) {
+    public static void compressPic(final ArrayList<String> photoPaths, final Context context,@NonNull final FinishCallback<File> callback) {
         final List<File> uploadImages = new ArrayList<>();
         final LinkedList<Runnable> taskList = new LinkedList<>();
         final Handler handler = new Handler();
@@ -48,6 +49,7 @@ public class LuBanUtils {
                                     Runnable runnable = taskList.pop();
                                     handler.post(runnable);
                                 } else {
+                                    callback.onFinish(uploadImages.get(0));
                                     //notice 集合压缩完毕 向服务器上传压缩后的文件
                                     // dosomthing(uploadImages)
                                 }

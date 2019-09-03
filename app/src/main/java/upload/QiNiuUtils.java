@@ -1,5 +1,6 @@
 package upload;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.qiniu.android.common.FixedZone;
@@ -10,6 +11,7 @@ import com.qiniu.android.storage.UpProgressHandler;
 import com.qiniu.android.storage.UploadManager;
 import com.qiniu.android.storage.UploadOptions;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -24,10 +26,10 @@ public class QiNiuUtils {
     /**
      * notice 没有进度监听--上传一个图片
      * @param data = <File对象、或 文件路径、或 字节数组>
-     * @param key = <指定七牛服务上的文件名，或 null >;
+     * @param key = <指定七牛服务上的文件名，或 null >;null时候
      * @param token token = <从服务端SDK获取 >;
      */
-    public void uploadProject(File data, String key, String token) {
+    public static void uploadProject(File data, String key, String token, @NonNull final FinishCallback<String> callback) {
         //指定zone的具体区域
         //FixedZone.zone0   华东机房
         //FixedZone.zone1   华北机房
@@ -43,6 +45,7 @@ public class QiNiuUtils {
                     public void complete(String key, ResponseInfo info, JSONObject res) {
                         //res包含hash、key等信息，具体字段取决于上传策略的设置
                         if (info.isOK()) {
+                            callback.onFinish("qiniu"+ key + ",\r\n " + info + ",\r\n " + res);
                             Log.i("qiniu", "Upload Success");
                         } else {
                             Log.i("qiniu", "Upload Fail");
